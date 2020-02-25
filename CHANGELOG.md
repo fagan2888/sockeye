@@ -16,6 +16,9 @@ Each version section may have have subsections for: _Added_, _Changed_, _Removed
 - Ability to set environment variables from training/translate CLIs before MXNet is imported. For example, users can 
   configure MXNet as such: `--env "OMP_NUM_THREADS=1;MXNET_ENGINE_TYPE=NaiveEngine"`
 
+### Changed
+- Use length argument in softmax operation for multihead attention.
+
 ## [2.1.0]
 
 ### Changed
