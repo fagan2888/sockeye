@@ -556,7 +556,7 @@ def create_model_config(args: argparse.Namespace,
             for i, combine in enumerate(args.source_factors_combine):
                 if combine in [C.SOURCE_FACTORS_COMBINE_SUM, C.SOURCE_FACTORS_COMBINE_AVERAGE]:
                     logger.info("Setting embedding size of factor %d to `num_embed` ('%d') for %s",
-                                num_embed_source, i + 1,
+                                i + 1, num_embed_source,
                                 "summing" if combine == C.SOURCE_FACTORS_COMBINE_SUM else "averaging")
                     source_factors_num_embed[i] = num_embed_source
 
@@ -663,7 +663,9 @@ def create_optimizer_config(args: argparse.Namespace) -> OptimizerConfig:
                                      factor_type=args.weight_init_xavier_factor_type,
                                      magnitude=args.weight_init_scale)
     elif args.weight_init == C.INIT_UNIFORM:
-        weight_init = mx.init.Uniform(scale=args.weight_init_scale)
+        weight_init = mx.init.Uniform(scale
+                                      
+                                      =args.weight_init_scale)
     else:
         raise ValueError("Invalid weight initialization type: %s" % args.weight_init)
 
