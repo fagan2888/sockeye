@@ -159,9 +159,9 @@ def test_inference_args(test_params, expected_params):
 
 
 @pytest.mark.parametrize("test_params, expected_params", [
-    ('', dict(batch_size=4096,
+    ('', dict(batch_size=2048,
               batch_type='word',
-              round_batch_sizes_to_multiple_of=1,
+              batch_sentences_multiple_of=1,
               loss=C.CROSS_ENTROPY,
               label_smoothing=0.1,
               length_task=None,

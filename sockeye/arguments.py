@@ -706,28 +706,36 @@ def add_model_parameters(params):
                                    'Default: %(default)s.')
 
 
-def add_batch_args(params, default_batch_size=4096):
+def add_batch_args(params, default_batch_size=2048):
     params.add_argument('--batch-size', '-b',
                         type=int_greater_or_equal(1),
                         default=default_batch_size,
-                        help='Mini-batch size. Note that depending on the batch-type this either refers to '
-                             'words or sentences.'
-                             'Sentence: each batch contains X sentences, number of words varies. '
-                             'Word: each batch contains (approximately) X words, number of sentences varies. '
+                        help='Mini-batch size per device (ex: batch size 2048 with 4 devices gives effective batch '
+                             'size 8192). Depending on --batch-type, this either refers to words or sentences. '
+                             'Sentence: each batch contains exactly X sentences. '
+                             'Word: each batch contains up to X target words, variable number of sentences depending '
+                             'on sentence length. '
                              'Default: %(default)s.')
     params.add_argument("--batch-type",
                         type=str,
                         default=C.BATCH_TYPE_WORD,
                         choices=[C.BATCH_TYPE_SENTENCE, C.BATCH_TYPE_WORD],
-                        help="Sentence: each batch contains X sentences, number of words varies."
-                             "Word: each batch contains (approximately) X target words, "
-                             "number of sentences varies. Default: %(default)s.")
-    params.add_argument('--round-batch-sizes-to-multiple-of',
+                        help='Sentence: each batch contains exactly X sentences. '
+                             'Word: each batch contains up to X target words. '
+                             'Default: %(default)s.')
+    params.add_argument('--batch-sentences-multiple-of',
                         type=int,
                         default=1,
-                        help='For word-based batches, round each bucket\'s batch size (measured in sentences) to a '
-                             'multiple of this integer. Default: %(default)s.')
-
+                        help='For word-based batching, guarantee that each batch contains a multiple of X sentences, '
+                             'always rounding down (for X=8, a batch normally containing 127 sentences would contain '
+                             '120, not 128).'
+                             'Default: %(default)s.')
+    params.add_argument('--update-interval',
+                        type=int,
+                        default=1,
+                        help='Accumulate gradients over X batches for each model update. Set a value higher than 1 to '
+                             'simulate large batches (ex: batch size 2048, 4 devices, update interval 4 gives effective '
+                             'batch size 32768). Default: %(default)s.')
 
 
 def add_hybridization_arg(params):
@@ -771,10 +779,6 @@ def add_training_args(params):
                               choices=C.METRICS,
                               help='Metric to optimize with early stopping {%(choices)s}. Default: %(default)s.')
 
-    train_params.add_argument('--update-interval',
-                              type=int,
-                              default=1,
-                              help="Number of batch gradients to accumulate before updating. Default: %(default)s.")
     train_params.add_argument(C.TRAIN_ARGS_CHECKPOINT_INTERVAL,
                               type=int_greater_or_equal(1),
                               default=4000,
