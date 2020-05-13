@@ -1698,7 +1698,7 @@ class ShardedParallelSampleIter(BaseParallelSampleIter):
 
             if horovod_mpi.using_horovod():
                 # Synchronize shard order across workers
-                horovod_mpi.MPI.COMM_WORLD.bcast(self.shards_fnames, root=0)
+                self.shards_fnames = horovod_mpi.MPI.COMM_WORLD.bcast(self.shards_fnames, root=0)
 
             self.shard_index = 0
             self._load_shard()
