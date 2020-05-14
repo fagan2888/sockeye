@@ -61,6 +61,8 @@ def main():
                  '--build-arg', 'REQS_BASE={}'.format(read_requirements(REQS_BASE)),
                  '--build-arg', 'REQS_HOROVOD={}'.format(read_requirements(REQS_HOROVOD))])
 
+    run_command([DOCKER, 'tag', '{}:{}'.format(REPOSITORY, tag), '{}:latest'.format(REPOSITORY)])
+
 
 if __name__ == '__main__':
     main()
